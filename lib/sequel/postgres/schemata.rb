@@ -43,11 +43,17 @@ module Sequel
             cast('varchar[]')).single_value.map(&:to_sym)
         end
         
+        # Renames a schema
+        def rename_schema from, to
+          self << RENAME_SCHEMA_SQL % [from.to_s.gsub('"', '""'), to.to_s.gsub('"', '""')]
+        end
+        
         private
         
         SHOW_SEARCH_PATH = "SHOW search_path".freeze
         SCHEMA_SCAN_RE = /(?<=\A|, )(".*?"|.*?)(?=, |\z)/.freeze
         SCHEMA_SUB_RE = /\A"(.*)"\z/.freeze
+        RENAME_SCHEMA_SQL = 'ALTER SCHEMA "%s" RENAME TO "%s"'.freeze
       end
     end
     
