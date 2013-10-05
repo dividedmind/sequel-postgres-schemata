@@ -1,5 +1,7 @@
 require "sequel/postgres/schemata/version"
 
+Sequel.extension :pg_array
+
 module Sequel
   module Postgres
     module Schemata
@@ -33,6 +35,12 @@ module Sequel
             raise Error, "unrecognized value for search_path: #{search_path.inspect}"
           end
           self << "SET search_path = #{search_path.map{|s| "\"#{s.to_s.gsub('"', '""')}\""}.join(',')}"
+        end
+        
+        # Returns the current schemata, as return by current_schemas(false).
+        def current_schemata
+          metadata_dataset.select(Sequel::function(:current_schemas, false).
+            cast('varchar[]')).single_value.map(&:to_sym)
         end
         
         private

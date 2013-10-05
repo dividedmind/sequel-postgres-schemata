@@ -51,11 +51,21 @@ describe Sequel::Postgres::Schemata do
   end
   
   describe "#current_schemata" do
-    it "returns the current schemata"
+    it "returns the current schemata" do
+      db.current_schemata.should == %i(public)
+    end
   end
   
   describe "#rename_schema" do
-    it "renames a schema"
+    it "renames a schema" do
+      db.transaction rollback: :always do
+        db.create_schema :test_schema
+        db.schemata.should include(:test_schema)
+        db.current_schemata.should == %i(public)
+        db.rename_schema :test_schema, :foo
+        db.current_schemata.should == %i(foo public)
+      end
+    end
   end
 
 end
