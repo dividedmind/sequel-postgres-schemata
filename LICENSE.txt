@@ -1,4 +1,4 @@
-Copyright (c) 2013 Rafał Rzepecki
+Copyright (c) 2013 Conjur Inc.
 
 MIT License
 

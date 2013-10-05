@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "sequel-postgres-schemata"
   spec.version       = Sequel::Postgres::Schemata::VERSION
   spec.authors       = ["Rafał Rzepecki"]
-  spec.email         = ["divided.mind@gmail.com"]
+  spec.email         = ["rafal@conjur.net"]
   spec.description   = %q{Allows easy manipulation of Postgres schemas from Ruby with Sequel}
   spec.summary       = %q{Postgres schema manipulation}
   spec.homepage      = "https://github.com/dividedmind/sequel-postgres-schemata"
