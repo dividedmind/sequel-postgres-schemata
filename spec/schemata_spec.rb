@@ -19,7 +19,35 @@ describe Sequel::Postgres::Schemata do
   end
   
   describe "#search_path=" do
-    it "sets the search path"
+    it "accepts a single symbol" do
+      db.search_path = %i(bar)
+      db.search_path.should == %i(bar)
+    end
+    
+    it "accepts a single string" do
+      db.search_path = 'bar'
+      db.search_path.should == %i(bar)
+    end
+    
+    it "accepts a formatted string" do
+      db.search_path = 'bar, baz'
+      db.search_path.should == %i(bar baz)
+    end
+    
+    it "accepts a symbol list" do
+      db.search_path = %i(bar baz)
+      db.search_path.should == %i(bar baz)
+    end
+    
+    it "accepts a string list" do
+      db.search_path = %w(bar baz)
+      db.search_path.should == %i(bar baz)
+    end
+
+    it "quotes the string list" do
+      db.search_path = %w(bar, baz)
+      db.search_path.should == %i(bar, baz)
+    end
   end
   
   describe "#current_schemata" do
