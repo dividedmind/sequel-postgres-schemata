@@ -29,6 +29,8 @@ module Sequel
           case search_path
           when String
             search_path = search_path.split(",").map{|s| s.strip}
+          when Symbol
+            search_path = [search_path]
           when Array
             # nil
           else
@@ -37,7 +39,7 @@ module Sequel
           self << "SET search_path = #{search_path.map{|s| "\"#{s.to_s.gsub('"', '""')}\""}.join(',')}"
         end
         
-        # Returns the current schemata, as return by current_schemas(false).
+        # Returns the current schemata, as returned by current_schemas(false).
         def current_schemata
           metadata_dataset.select(Sequel::function(:current_schemas, false).
             cast('varchar[]')).single_value.map(&:to_sym)

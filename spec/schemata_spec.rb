@@ -20,7 +20,7 @@ describe Sequel::Postgres::Schemata do
   
   describe "#search_path=" do
     it "accepts a single symbol" do
-      db.search_path = %i(bar)
+      db.search_path = :bar
       db.search_path.should == %i(bar)
     end
     
