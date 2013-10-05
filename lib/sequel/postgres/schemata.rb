@@ -2,8 +2,7 @@ require "sequel/postgres/schemata/version"
 
 module Sequel
   module Postgres
-    module Schemata
-      # Your code goes here...
+    module Schemata        
     end
   end
 end
