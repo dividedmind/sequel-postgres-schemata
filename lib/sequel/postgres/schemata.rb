@@ -41,6 +41,7 @@ module Sequel
         
         # Returns the current schemata, as returned by current_schemas(false).
         def current_schemata
+          extension :pg_array
           metadata_dataset.select(Sequel::function(:current_schemas, false).
             cast('varchar[]')).single_value.map(&:to_sym)
         end
