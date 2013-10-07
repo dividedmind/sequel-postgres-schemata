@@ -62,5 +62,7 @@ module Sequel
     module DatabaseMethods
       include ::Sequel::Postgres::Schemata::DatabaseMethods
     end
+    
+    Database.send :include, ::Sequel::Postgres::Schemata::DatabaseMethods if defined? Database
   end
 end
