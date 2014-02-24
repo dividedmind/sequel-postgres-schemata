@@ -18,7 +18,7 @@ module Sequel
         def search_path
           metadata_dataset.with_sql(SHOW_SEARCH_PATH).
             single_value.scan(SCHEMA_SCAN_RE).flatten.
-            map{|s|s.sub(SCHEMA_SUB_RE, '\1').gsub('""', '"').to_sym}
+            map{|s|s.strip.sub(SCHEMA_SUB_RE, '\1').gsub('""', '"').to_sym}
         end
         
         # Sets the search path. Starting with Postgres 9.2 it can contain
@@ -54,7 +54,7 @@ module Sequel
         private
         
         SHOW_SEARCH_PATH = "SHOW search_path".freeze
-        SCHEMA_SCAN_RE = /(?<=\A|, )(".*?"|.*?)(?=, |\z)/.freeze
+        SCHEMA_SCAN_RE = /(?<=\A|,)(".*?"|.*?)(?=,|\z)/.freeze
         SCHEMA_SUB_RE = /\A"(.*)"\z/.freeze
         RENAME_SCHEMA_SQL = 'ALTER SCHEMA "%s" RENAME TO "%s"'.freeze
       end

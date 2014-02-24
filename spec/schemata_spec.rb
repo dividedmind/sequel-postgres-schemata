@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Sequel::Postgres::Schemata do
   
   let(:db) { Sequel::connect adapter: 'postgres', search_path: %w(foo public) } 
+  let(:plain_db) { Sequel::connect adapter: 'postgres' }
 
   describe "#schemata" do
     it "lists all existing schematas" do
@@ -15,6 +16,10 @@ describe Sequel::Postgres::Schemata do
   describe "#search_path" do
     it "returns the search path" do
       db.search_path.should == %i(foo public)
+    end
+
+    it "correctly handles the default list" do
+      expect(plain_db.search_path).to eq(%i($user public))
     end
   end
   
@@ -44,9 +49,9 @@ describe Sequel::Postgres::Schemata do
       db.search_path.should == %i(bar baz)
     end
 
-    it "quotes the string list" do
-      db.search_path = %w(bar, baz)
-      db.search_path.should == %i(bar, baz)
+    it "quotes the string list correctly" do
+      db.search_path = ["bar\" ',", "baz"]
+      db.search_path.should == [:"bar\" ',", :baz]
     end
   end
   
