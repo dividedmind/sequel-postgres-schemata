@@ -21,6 +21,29 @@ describe Sequel::Postgres::Schemata do
     it "correctly handles the default list" do
       expect(plain_db.search_path).to eq(%i($user public))
     end
+
+    describe "with a block" do
+      it "changes the search path temporarily" do
+        db.search_path :bar do
+          db.search_path.should == %i(bar)
+        end
+        db.search_path.should == %i(foo public)
+      end
+
+      it "accepts symbols as arglist" do
+        db.search_path :bar, :baz do
+          db.search_path.should == %i(bar baz)
+        end
+        db.search_path.should == %i(foo public)
+      end
+
+      it "allows prepending with prepend: true" do
+        db.search_path :bar, prepend: true do
+          db.search_path.should == %i(bar foo public)
+        end
+        db.search_path.should == %i(foo public)
+      end
+    end
   end
   
   describe "#search_path=" do

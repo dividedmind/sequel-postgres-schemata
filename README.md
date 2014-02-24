@@ -24,12 +24,22 @@ db = Sequel.connect adapter: 'postgres', search_path: %w(foo public)
 db.create_schema :bar
 
 db.search_path # => [:foo, :public]
+
+db.search_path :baz do
+  db.search_path # => [:baz]
+end
+
+db.search_path :baz, prepend: true do
+  db.search_path # => [:baz, :foo, :public]
+end
+
 db.schemata # => [:pg_toast, :pg_temp_1, :pg_toast_temp_1, :pg_catalog, :public, :information_schema, :bar]
 db.current_schemata # => [:public]
 db.search_path = [:bar, :foo, :public]
 db.current_schemata # => [:bar, :public]
 db.rename_schema :bar, :foo
 db.current_schemata # => [:foo, :public]
+
 ```
 
 ## Contributing

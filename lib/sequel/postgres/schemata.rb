@@ -15,16 +15,24 @@ module Sequel
         
         # Returns a symbol list containing the current search path.
         # Note that the search path can contain non-existent schematas.
-        def search_path
-          metadata_dataset.with_sql(SHOW_SEARCH_PATH).
-            single_value.scan(SCHEMA_SCAN_RE).flatten.
-            map{|s|s.strip.sub(SCHEMA_SUB_RE, '\1').gsub('""', '"').to_sym}
+        # If given a block and an argument, instead temporarily changes
+        # the search path inside the block. It also accepts several arguments,
+        # in which case it treats them as an array of schemata to put in search path.
+        # If you use prepend: true, it prepends any given schemata to the current search path.
+        def search_path *a, prepend: false, &block
+          if block_given?
+            a = a.flatten
+            a += search_path if prepend
+            run_with_search_path a, &block
+          else
+            get_search_path
+          end
         end
         
         # Sets the search path. Starting with Postgres 9.2 it can contain
         # non-existent schematas.
-        # Accepted formats include a single symbol, a single string (passed
-        # to the server verbatim) and lists of symbols or strings.
+        # Accepted formats include a single symbol, a single string (split on ,)
+        # and lists of symbols or strings.
         def search_path= search_path
           case search_path
           when String
@@ -52,7 +60,20 @@ module Sequel
         end
         
         private
-        
+
+        def get_search_path
+          metadata_dataset.with_sql(SHOW_SEARCH_PATH).
+            single_value.scan(SCHEMA_SCAN_RE).flatten.
+            map{|s|s.strip.sub(SCHEMA_SUB_RE, '\1').gsub('""', '"').to_sym}
+        end
+
+        def run_with_search_path path, &block
+          old_path = search_path
+          self.search_path = path
+          yield
+          self.search_path = old_path
+        end
+
         SHOW_SEARCH_PATH = "SHOW search_path".freeze
         SCHEMA_SCAN_RE = /(?<=\A|,)(".*?"|.*?)(?=,|\z)/.freeze
         SCHEMA_SUB_RE = /\A"(.*)"\z/.freeze
