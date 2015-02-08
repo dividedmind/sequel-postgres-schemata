@@ -30,6 +30,20 @@ describe Sequel::Postgres::Schemata do
         db.search_path.should == %i(foo public)
       end
 
+      it "resets the search path when the given block raises an error" do
+        class MyContrivedError < StandardError; end
+
+        begin
+          db.search_path :bar do
+            db.search_path.should == %i(bar)
+            raise MyContrivedError.new
+          end
+        rescue MyContrivedError
+          # Gobble.
+        end
+        db.search_path.should == %i(foo public)
+      end
+
       it "accepts symbols as arglist" do
         db.search_path :bar, :baz do
           db.search_path.should == %i(bar baz)
