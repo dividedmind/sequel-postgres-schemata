@@ -69,9 +69,13 @@ module Sequel
 
         def run_with_search_path path, &block
           old_path = search_path
-          self.search_path = path
-          yield
-          self.search_path = old_path
+
+          begin
+            self.search_path = path
+            yield
+          ensure
+            self.search_path = old_path
+          end
         end
 
         SHOW_SEARCH_PATH = "SHOW search_path".freeze
