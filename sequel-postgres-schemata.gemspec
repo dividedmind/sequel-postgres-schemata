@@ -21,7 +21,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "sequel", "~> 4.3"
   
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake", "~> 10.1"
-  spec.add_development_dependency "rspec", "~> 2.14"
+  spec.add_development_dependency "rake", "~> 12.3.3"
+  spec.add_development_dependency "rspec", "~> 3.9"
   spec.add_development_dependency "pg", "~> 0.16"
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
 end

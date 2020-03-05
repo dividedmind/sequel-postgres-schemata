@@ -2,20 +2,37 @@ require 'spec_helper'
 
 describe Sequel::Postgres::Schemata do
   
-  let(:db) { Sequel::connect adapter: 'postgres', search_path: %w(foo public) } 
-  let(:plain_db) { Sequel::connect adapter: 'postgres' }
+  let(:db) {
+    Sequel::connect(
+      adapter: 'postgres',
+      database: 'postgres',
+      search_path: %w(foo public),
+      host: 'db',
+      user: 'postgres',
+      password: 'example'
+    )
+  } 
+  let(:plain_db) {
+    Sequel::connect(
+      adapter: 'postgres',
+      database: 'postgres',
+      host: 'db',
+      user: 'postgres',
+      password: 'example'
+    )
+  }
 
   describe "#schemata" do
     it "lists all existing schematas" do
       schemata = db.schemata
-      schemata.should include(:public)
-      schemata.should_not include(:foo)
+      expect(schemata).to include(:public)
+      expect(schemata).to_not include(:foo)
     end
   end
   
   describe "#search_path" do
     it "returns the search path" do
-      db.search_path.should == %i(foo public)
+      expect(db.search_path).to eq(%i(foo public))
     end
 
     it "correctly handles the default list" do
@@ -25,9 +42,9 @@ describe Sequel::Postgres::Schemata do
     describe "with a block" do
       it "changes the search path temporarily" do
         db.search_path :bar do
-          db.search_path.should == %i(bar)
+          expect(db.search_path).to eq(%i(bar))
         end
-        db.search_path.should == %i(foo public)
+        expect(db.search_path).to eq(%i(foo public))
       end
 
       it "resets the search path when the given block raises an error" do
@@ -35,27 +52,27 @@ describe Sequel::Postgres::Schemata do
 
         begin
           db.search_path :bar do
-            db.search_path.should == %i(bar)
+            expect(db.search_path).to eq(%i(bar))
             raise MyContrivedError.new
           end
         rescue MyContrivedError
           # Gobble.
         end
-        db.search_path.should == %i(foo public)
+        expect(db.search_path).to eq(%i(foo public))
       end
 
       it "accepts symbols as arglist" do
         db.search_path :bar, :baz do
-          db.search_path.should == %i(bar baz)
+          expect(db.search_path).to eq(%i(bar baz))
         end
-        db.search_path.should == %i(foo public)
+        expect(db.search_path).to eq(%i(foo public))
       end
 
       it "allows prepending with prepend: true" do
         db.search_path :bar, prepend: true do
-          db.search_path.should == %i(bar foo public)
+          expect(db.search_path).to eq(%i(bar foo public))
         end
-        db.search_path.should == %i(foo public)
+        expect(db.search_path).to eq(%i(foo public))
       end
     end
   end
@@ -63,38 +80,38 @@ describe Sequel::Postgres::Schemata do
   describe "#search_path=" do
     it "accepts a single symbol" do
       db.search_path = :bar
-      db.search_path.should == %i(bar)
+      expect(db.search_path).to eq(%i(bar))
     end
     
     it "accepts a single string" do
       db.search_path = 'bar'
-      db.search_path.should == %i(bar)
+      expect(db.search_path).to eq(%i(bar))
     end
     
     it "accepts a formatted string" do
       db.search_path = 'bar, baz'
-      db.search_path.should == %i(bar baz)
+      expect(db.search_path).to eq(%i(bar baz))
     end
     
     it "accepts a symbol list" do
       db.search_path = %i(bar baz)
-      db.search_path.should == %i(bar baz)
+      expect(db.search_path).to eq(%i(bar baz))
     end
     
     it "accepts a string list" do
       db.search_path = %w(bar baz)
-      db.search_path.should == %i(bar baz)
+      expect(db.search_path).to eq(%i(bar baz))
     end
 
     it "quotes the string list correctly" do
       db.search_path = ["bar\" ',", "baz"]
-      db.search_path.should == [:"bar\" ',", :baz]
+      expect(db.search_path).to eq([:"bar\" ',", :baz])
     end
   end
   
   describe "#current_schemata" do
     it "returns the current schemata" do
-      db.current_schemata.should == %i(public)
+      expect(db.current_schemata).to eq(%i(public))
     end
   end
   
@@ -102,10 +119,10 @@ describe Sequel::Postgres::Schemata do
     it "renames a schema" do
       db.transaction rollback: :always do
         db.create_schema :test_schema
-        db.schemata.should include(:test_schema)
-        db.current_schemata.should == %i(public)
+        expect(db.schemata).to include(:test_schema)
+        expect(db.current_schemata).to eq(%i(public))
         db.rename_schema :test_schema, :foo
-        db.current_schemata.should == %i(foo public)
+        expect(db.current_schemata).to eq(%i(foo public))
       end
     end
   end

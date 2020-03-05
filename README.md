@@ -17,6 +17,7 @@ Or install it yourself as:
     $ gem install sequel-postgres-schemata
 
 ## Usage
+
 ```ruby
 Sequel.extension :postgres_schemata
 
@@ -39,7 +40,14 @@ db.search_path = [:bar, :foo, :public]
 db.current_schemata # => [:bar, :public]
 db.rename_schema :bar, :foo
 db.current_schemata # => [:foo, :public]
+```
 
+## Running the Tests
+
+Install docker and docker-compose then run:
+
+```
+./run-tests.sh
 ```
 
 ## Contributing
