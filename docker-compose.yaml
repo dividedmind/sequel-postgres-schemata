@@ -1,0 +1,20 @@
+---
+version: '3'
+services:
+  db:
+    image: "postgres:9.4"
+    environment:
+      - POSTGRES_PASSWORD=example
+
+  tests:
+    image: ruby:2.6
+    working_dir: /work
+    links:
+      - db
+    volumes:
+      - ./:/work
+    command: >
+      bash -c "
+        bundle install;
+        bundle exec rake spec
+      "
