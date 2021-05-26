@@ -15,6 +15,7 @@ services:
       - ./:/work
     command: >
       bash -c "
+        gem install bundler:2.2.18;
         bundle install;
         bundle exec rake spec
       "
