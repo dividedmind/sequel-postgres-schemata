@@ -7,7 +7,7 @@ services:
       - POSTGRES_PASSWORD=example
 
   tests:
-    image: ruby:2.6
+    image: ruby:3.1
     working_dir: /work
     links:
       - db
@@ -15,7 +15,7 @@ services:
       - ./:/work
     command: >
       bash -c "
-        gem install bundler:2.2.18;
+        gem install bundler:2.2.33;
         bundle install;
         bundle exec rake spec
       "
